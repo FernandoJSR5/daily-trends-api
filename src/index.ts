@@ -1,37 +1,19 @@
-import bodyParser from 'body-parser';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import express from 'express';
-import http from 'http';
-import mongoose from 'mongoose';
-import { port, url } from './config/env';
-import router from './router';
+import routes from './api/routes';
+import { port } from './config/env';
+import Server from './config/server';
+import ScrapingService from './services/scraping-service';
 
-const app = express();
+const run = async () => {
+  (await new Server().router(routes)).listen(port);
+  ScrapingService.scrapingFeeds();
+};
 
-app.use(
-  cors({
-    credentials: true,
-  })
-);
+run();
 
-app.use(compression());
-app.use(cookieParser());
-app.use(bodyParser.json());
+// // const MONGO_URL = url;
 
-const server = http.createServer(app);
-
-server.listen(port, () => {
-  console.log(`Server runing on http://localhost:${port}`);
-});
-
-const MONGO_URL = url;
-
-mongoose.Promise = Promise;
-mongoose.connect(MONGO_URL);
-mongoose.connection.on('error', (error: Error) => {
-  console.log(error);
-});
-
-app.use('/', router());
+// // mongoose.Promise = Promise;
+// // mongoose.connect(MONGO_URL);
+// // mongoose.connection.on('error', (error: Error) => {
+// //   console.log(error);
+// // });

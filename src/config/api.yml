@@ -1,0 +1,57 @@
+swagger: '2.0'
+info:
+  title: Daily Trends API
+  description: Api for apply CRUD actions
+  version: 1.0.0
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /actions/get-feeds:
+    get:
+      description: It get from MongoDB Atlas documents with feeds info by journal.
+      parameters:
+        - in: body
+          schema:
+            '$ref': '#/definitions/FeedDTO'
+      responses:
+        '200':
+          description: Success response
+          schema:
+            '$ref': '#/definitions/ApiResponse'
+        '500':
+          description: ApiError
+          schema:
+            '$ref': '#/definitions/ApiError'
+  /spec:
+    get:
+      tags:
+        - Specification
+      responses:
+        200:
+          description: Return the API specification
+definitions:
+  FeedDTO:
+    type: object
+    required:
+      - title
+      - description
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+  ApiError:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
