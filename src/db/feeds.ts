@@ -8,11 +8,9 @@ const FeedSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     author: {
       type: String,
-      required: true,
     },
     journal: {
       type: String,
@@ -22,13 +20,16 @@ const FeedSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image_link: {
-      data: Buffer,
-      contentType: String,
-    },
   },
   { timestamps: true }
 );
 
 export const FeedModel = mongoose.model('Feed', FeedSchema);
-export const getFeeds = () => FeedModel.find();
+export const getFeedsByDate = (date: String) =>
+  FeedModel.find({
+    updatedAt: {
+      $gte: date,
+    },
+  });
+export const createFeed = (values: Record<string, any>) =>
+  new FeedModel(values).save().then((feed) => feed.toObject());

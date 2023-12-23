@@ -1,8 +1,21 @@
-import { getFeeds } from '../../../db/feeds';
+import { getFeedsByDate } from '../../../db/feeds';
 
-const findAllFeeds = async () => {
-  const feeds = await getFeeds();
+const findAFeeds = async () => {
+  const today = new Date();
+
+  const currentDate = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDay(),
+    0,
+    0,
+    0
+  );
+
+  currentDate.toLocaleDateString('es-ES');
+
+  const feeds = await getFeedsByDate(currentDate.toISOString());
   return feeds;
 };
 
-export default findAllFeeds;
+export default findAFeeds;

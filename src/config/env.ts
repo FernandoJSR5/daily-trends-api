@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 export const port = env.get('PORT').default('5000').asInt();
-export const url = env.get('MONGO_URL').required().asString();
+export const MONGO_URL = env.get('MONGO_URL').required().asString();
 export const basePath = env.get('BASE_PATH').required().asString();
 export const nodeEnv = env.get('NODE_ENV').required().asString();
 export const requestLimit = env.get('REQUEST_LIMIT').required().asString();

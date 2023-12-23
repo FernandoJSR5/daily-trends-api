@@ -1,19 +1,19 @@
+import mongoose from 'mongoose';
 import routes from './api/routes';
-import { port } from './config/env';
+import { MONGO_URL, port } from './config/env';
 import Server from './config/server';
-import ScrapingService from './services/scraping-service';
 
 const run = async () => {
+  mongoose.Promise = Promise;
+  mongoose.connect(MONGO_URL).then(
+    () => {
+      console.log('🔌 Database connection was successful! 🔌');
+    },
+    (error: Error) => {
+      console.log(`❌ ${error} ❌`);
+    }
+  );
   (await new Server().router(routes)).listen(port);
-  ScrapingService.scrapingFeeds();
 };
 
 run();
-
-// // const MONGO_URL = url;
-
-// // mongoose.Promise = Promise;
-// // mongoose.connect(MONGO_URL);
-// // mongoose.connection.on('error', (error: Error) => {
-// //   console.log(error);
-// // });

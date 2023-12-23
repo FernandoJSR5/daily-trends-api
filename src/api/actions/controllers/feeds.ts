@@ -1,14 +1,17 @@
 import { Request, Response } from 'express';
+import FeedService from '../../../services/feed-service';
 import ScrapingService from '../../../services/scraping-service';
+import Constants from '../../../utils/constants';
 
 export const getFeeds = async (req: Request, res: Response): Promise<Response> => {
   try {
     let feeds;
-    // feeds = await FeedService.findFeeds();
-    feeds = await ScrapingService.scrapingFeeds();
 
-    // if (feeds.length === Constants.ZERO) {
-    // }
+    feeds = await FeedService.findFeeds();
+
+    if (feeds.length === Constants.ZERO) {
+      feeds = await ScrapingService.scrapingFeeds();
+    }
 
     return res.status(200).json(feeds);
   } catch (error) {
