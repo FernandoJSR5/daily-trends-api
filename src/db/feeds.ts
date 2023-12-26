@@ -28,7 +28,7 @@ export const FeedModel = mongoose.model('Feed', FeedSchema);
 export const getFeedsByDate = (date: String) =>
   FeedModel.find({
     updatedAt: {
-      $gte: date,
+      $gte: '2023-12-25T00:00:00.0000Z',
     },
   });
 export const createFeed = (values: Record<string, any>) =>

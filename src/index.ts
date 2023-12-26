@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import routes from './api/routes';
 import { MONGO_URL, port } from './config/env';
 import Server from './config/server';
+import ScrapingService from './services/scraping-service';
 
 const run = async () => {
   mongoose.Promise = Promise;
@@ -14,6 +15,7 @@ const run = async () => {
     }
   );
   (await new Server().router(routes)).listen(port);
+  ScrapingService.scrapingFeeds();
 };
 
 run();
