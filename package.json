@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/index.js",
+    "dev": "nodemon scr/index.ts",
+    "build": "tsc -p ./tsconfig.json",
+    "postbuild": "npm run copy-files",
+    "clean": "rimraf ./dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "swagger": "swagger-typescript-api -p ./src/config/api.yml -o ./src/api/utils -n myApi.ts --modular --no-client ",
+    "copy-files": "copyfiles -u 1 src/**/*.yml dist/"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +23,11 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/mongoose": "^5.11.97",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.0.2",
+    "swagger-typescript-api": "^13.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
@@ -34,6 +44,8 @@
     "express-actuator": "^1.8.4",
     "mongoose": "^8.0.3",
     "puppeteer": "^21.6.1",
-    "swagger-express-middleware": "^4.0.2"
+    "swagger-express-middleware": "^4.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   }
 }
