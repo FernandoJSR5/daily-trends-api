@@ -1,6 +1,8 @@
 import puppeteer from 'puppeteer';
+import { FeedDTO } from '../../../api/utils/data-contracts';
 import { createFeed } from '../../../db/feeds';
 import Constants from '../../../utils/constants';
+import { buildFeed } from '../../../utils/index';
 
 const scrapingFeeds = async () => {
   let navigateOnePage = async () => {
@@ -13,33 +15,34 @@ const scrapingFeeds = async () => {
         deviceScaleFactor: 1,
       });
 
-      await page.goto('https://elpais.com', { waitUntil: 'networkidle2' });
+      await page.goto(Constants.FIRST_URL, { waitUntil: 'networkidle2' });
 
       new Promise((page) => setTimeout(page, randomIntFromInterval(1000, 2000)));
 
       const firstFeeds = await saveFeedsOfOnePage(page);
 
-      const secondFeeds = await navegateToSecondPage(page, 'https://www.elmundo.es');
+      const secondFeeds = await navegateToSecondPage(page);
 
       const result = firstFeeds.concat(secondFeeds);
 
-      return {
-        result,
-      };
+      return result;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   };
 
   const main = async () => {
-    await navigateOnePage();
+    const result = await navigateOnePage();
+    return result;
   };
 
-  main();
+  const result = await main();
+  return result;
 };
 
-const navegateToSecondPage = async (page: any, URL: String) => {
-  await page.goto(URL, { waitUntil: 'networkidle2' });
+const navegateToSecondPage = async (page: any) => {
+  await page.goto(Constants.SECOND_URL, { waitUntil: 'networkidle2' });
   new Promise((page) => setTimeout(page, randomIntFromInterval(1000, 2000)));
   const feeds = await saveFeedsOfSecondPage(page);
   return feeds;
@@ -65,10 +68,10 @@ const saveFeedsOfOnePage = async (page: any) => {
             const xpath = `//main[@class="mw mw-mc"]/div[1]/section/div[${
               index1 + 1
             }]/  ${index1 === Constants.TWO ? 'div/' : ''}  article[${index2 + 1}]`;
-            let author;
-            let title;
-            let description;
-            let link;
+            let author: String = '';
+            let title: String = '';
+            let description: String = '';
+            let link: String = '';
 
             const links = await page.$x(`${xpath}/header/h2/a`);
             if (links.length > Constants.ZERO) {
@@ -101,13 +104,13 @@ const saveFeedsOfOnePage = async (page: any) => {
               console.log(description);
             }
 
-            const feed = {
-              author: typeof author === 'undefined' ? '' : author,
+            const feed: FeedDTO = buildFeed(
+              author,
               title,
-              description: typeof description === 'undefined' ? '' : description,
+              description,
               link,
-              journal: Constants.EL_PAIS,
-            };
+              Constants.FIRST_PAGE
+            );
 
             await saveFeed(feed, feeds);
           }
@@ -132,12 +135,12 @@ const saveFeedsOfSecondPage = async (page: any) => {
       const subsections = await page.$x(`${mainPath}[${index1 + 1}]/div`);
       if (subsections.length > Constants.ZERO) {
         for (let index2 = 0; index2 < subsections.length; index2++) {
-          let author;
-          let title;
-          let description;
-          let link;
+          let author: String = '';
+          let title: String = '';
+          let description: String = '';
+          let link: String = '';
           if (index1 === Constants.ONE) {
-            let filteredAuthor;
+            let filteredAuthor: String = '';
             const article = await page.$x(
               `${mainPath}[${index1 + 1}]/div[${index2 + 1}]/article`
             );
@@ -172,13 +175,13 @@ const saveFeedsOfSecondPage = async (page: any) => {
               }
             }
 
-            const feed = {
-              author: typeof filteredAuthor === 'undefined' ? '' : filteredAuthor,
+            const feed: FeedDTO = buildFeed(
+              filteredAuthor,
               title,
-              description: typeof description === 'undefined' ? '' : description,
+              description,
               link,
-              journal: Constants.EL_MUNDO,
-            };
+              Constants.SECOND_PAGE
+            );
 
             await saveFeed(feed, feeds);
           } else {
@@ -227,13 +230,13 @@ const saveFeedsOfSecondPage = async (page: any) => {
                   }
                 }
 
-                const feed = {
-                  author: typeof author === 'undefined' ? '' : author,
+                const feed: FeedDTO = buildFeed(
+                  author,
                   title,
-                  description: typeof description === 'undefined' ? '' : description,
+                  description,
                   link,
-                  journal: Constants.EL_MUNDO,
-                };
+                  Constants.SECOND_PAGE
+                );
 
                 await saveFeed(feed, feeds);
               }
@@ -247,12 +250,13 @@ const saveFeedsOfSecondPage = async (page: any) => {
   return feeds;
 };
 
-const saveFeed = async (feed: any, feeds: any) => {
+const saveFeed = async (feedDTO: FeedDTO, feeds: any) => {
   try {
+    const feed = await createFeed(feedDTO);
     feeds.push(feed);
-    await createFeed(feed);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

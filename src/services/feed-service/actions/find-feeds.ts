@@ -1,20 +1,12 @@
 import { getFeedsByDate } from '../../../db/feeds';
+import { getDate } from '../../../utils/index';
 
 const findAFeeds = async () => {
-  const today = new Date();
+  const initDate = getDate(0, 0, 0, 0);
 
-  const currentDate = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDay(),
-    0,
-    0,
-    0
-  );
+  const finalDate = getDate(23, 59, 59, 59);
 
-  currentDate.toLocaleDateString('es-ES');
-
-  const feeds = await getFeedsByDate(currentDate.toISOString());
+  const feeds = await getFeedsByDate(initDate, finalDate);
   return feeds;
 };
 

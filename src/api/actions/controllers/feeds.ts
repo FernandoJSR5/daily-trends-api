@@ -1,9 +1,14 @@
+import { LegacyResponse } from 'api/utils/data-contracts';
 import { Request, Response } from 'express';
 import FeedService from '../../../services/feed-service';
 import ScrapingService from '../../../services/scraping-service';
 import Constants from '../../../utils/constants';
+import buildLegacyResponse from '../../utils/build-legacy-response';
 
-export const getFeeds = async (req: Request, res: Response): Promise<Response> => {
+export const getFeeds = async (
+  req: Request,
+  res: Response<LegacyResponse>
+): Promise<Response> => {
   try {
     let feeds;
 
@@ -13,9 +18,19 @@ export const getFeeds = async (req: Request, res: Response): Promise<Response> =
       feeds = await ScrapingService.scrapingFeeds();
     }
 
-    return res.status(200).json(feeds);
+    return res.status(200).json(
+      buildLegacyResponse({
+        status: 200,
+        description: 'Feeds delivered successfully',
+        data: feeds,
+      })
+    );
   } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
+    return res.sendStatus(500).json(
+      buildLegacyResponse({
+        status: 500,
+        description: error,
+      })
+    );
   }
 };

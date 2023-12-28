@@ -7,13 +7,25 @@ basePath: /api/v1
 schemes:
   - http
 paths:
-  /actions/get-feeds:
-    get:
+  /actions/new-feed:
+    post:
       description: It get from MongoDB Atlas documents with feeds info by journal.
       parameters:
         - in: body
           schema:
             '$ref': '#/definitions/FeedDTO'
+      responses:
+        '200':
+          description: Success response
+          schema:
+            '$ref': '#/definitions/ApiResponse'
+        '500':
+          description: ApiError
+          schema:
+            '$ref': '#/definitions/ApiError'
+  /actions/get-feeds:
+    get:
+      description: It get from MongoDB Atlas documents with feeds info by journal.
       responses:
         '200':
           description: Success response
@@ -36,22 +48,35 @@ definitions:
     required:
       - title
       - description
+      - author
+      - journal
+      - link
     properties:
       title:
         type: string
       description:
+        type: string
+      author:
+        type: string
+      journal:
+        type: string
+      link:
         type: string
   ApiResponse:
     type: object
     properties:
       status:
         type: string
-      message:
+      description:
         type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/FeedDTO'
   ApiError:
     type: object
     properties:
       status:
         type: string
-      message:
+      description:
         type: string
