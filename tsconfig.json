@@ -11,8 +11,9 @@
     "typeRoots": ["node_modules/@types"],
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "types": ["express"],
+    "types": ["express", "jest"],
     "experimentalDecorators": true
   },
-  "include": ["typings.d.ts", "src/**/*"]
+  "include": ["typings.d.ts", "src/**/*"],
+  "exclude": ["tests"]
 }

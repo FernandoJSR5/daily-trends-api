@@ -25,9 +25,10 @@ const scrapingFeeds = async () => {
 
       const result = firstFeeds.concat(secondFeeds);
 
+      await page.close();
+
       return result;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };
@@ -92,7 +93,6 @@ const saveFeedsOfOnePage = async (page: any) => {
                 (el: any) => el.innerText,
                 authors[0]
               )) as string;
-              console.log(author);
             }
 
             const descriptions = await page.$x(`${xpath}/p`);
@@ -101,7 +101,6 @@ const saveFeedsOfOnePage = async (page: any) => {
                 (el: any) => el.innerText,
                 descriptions[0]
               )) as string;
-              console.log(description);
             }
 
             const feed: FeedDTO = buildFeed(
@@ -152,7 +151,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
               const links = await page.$x(`${articleXPath}/a`);
               if (links.length > Constants.ZERO) {
                 link = (await page.evaluate((el: any) => el.href, links[0])) as string;
-                console.log(link);
               }
 
               const titles = await page.$x(`${articleXPath}/div/div/header/a/h2`);
@@ -161,7 +159,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
                   (el: any) => el.innerText,
                   titles[0]
                 )) as string;
-                console.log(title);
               }
 
               const authors = await page.$x(`${articleXPath}/div/div/div/ul/li/span`);
@@ -171,7 +168,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
                   authors[0]
                 )) as string;
                 filteredAuthor = author.replace('REDACCIÓN:\n', '');
-                console.log(filteredAuthor);
               }
             }
 
@@ -206,7 +202,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
                       (el: any) => el.href,
                       links[0]
                     )) as string;
-                    console.log(link);
                   }
 
                   const titles = await page.$x(`${articleXPath}/div/div/header/a/h2`);
@@ -215,7 +210,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
                       (el: any) => el.innerText,
                       titles[0]
                     )) as string;
-                    console.log(title);
                   }
 
                   const authors = await page.$x(
@@ -226,7 +220,6 @@ const saveFeedsOfSecondPage = async (page: any) => {
                       (el: any) => el.innerText,
                       authors[0]
                     )) as string;
-                    console.log(author);
                   }
                 }
 
@@ -255,7 +248,6 @@ const saveFeed = async (feedDTO: FeedDTO, feeds: any) => {
     const feed = await createFeed(feedDTO);
     feeds.push(feed);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

@@ -34,3 +34,5 @@ export const getFeedsByDate = (initDate: String, finalDate: String) =>
   });
 export const createFeed = (values: Record<string, any>) =>
   new FeedModel(values).save().then((feed) => feed.toObject());
+
+export const deleteAll = () => FeedModel.deleteMany();
