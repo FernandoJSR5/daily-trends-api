@@ -9,9 +9,15 @@ schemes:
 paths:
   /actions/new-feed:
     post:
-      description: It get from MongoDB Atlas documents with feeds info by journal.
+      tags:
+        - Actions
+      description: It save feed info in database.
+      produces:
+        - application/json
       parameters:
-        - in: body
+        - name: body
+          in: body
+          required: true
           schema:
             '$ref': '#/definitions/FeedDTO'
       responses:
@@ -20,19 +26,21 @@ paths:
           schema:
             '$ref': '#/definitions/ApiResponse'
         '500':
-          description: ApiError
+          description: Error Response
           schema:
             '$ref': '#/definitions/ApiError'
   /actions/get-feeds:
     get:
-      description: It get from MongoDB Atlas documents with feeds info by journal.
+      tags:
+        - Actions
+      description: It get feed info by journals.
       responses:
         '200':
           description: Success response
           schema:
             '$ref': '#/definitions/ApiResponse'
         '500':
-          description: ApiError
+          description: Error Response
           schema:
             '$ref': '#/definitions/ApiError'
   /spec:
@@ -62,6 +70,12 @@ definitions:
         type: string
       link:
         type: string
+    example:
+      title: Test Mongo
+      description: Prueba 1
+      author: Fernando Salazar
+      journal: El Periodico
+      link: http://localhost:8080
   ApiResponse:
     type: object
     properties:
