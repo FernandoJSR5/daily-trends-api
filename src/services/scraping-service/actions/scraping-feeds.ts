@@ -1,10 +1,10 @@
-import puppeteer from 'puppeteer';
-import { FeedDTO } from '../../../api/utils/data-contracts';
+import puppeteer, { Page } from 'puppeteer';
+import { FeedDTO, FeedSchema } from '../../../api/utils/data-contracts';
 import { createFeed } from '../../../db/feeds';
 import Constants from '../../../utils/constants';
 import { buildFeed } from '../../../utils/index';
 
-const scrapingFeeds = async () => {
+const scrapingFeeds = async (): Promise<FeedSchema[]> => {
   let navigateOnePage = async () => {
     try {
       const browser = await puppeteer.launch({ headless: false });
@@ -25,7 +25,7 @@ const scrapingFeeds = async () => {
 
       const result = firstFeeds.concat(secondFeeds);
 
-      await page.close();
+      await browser.close();
 
       return result;
     } catch (error) {
@@ -42,15 +42,15 @@ const scrapingFeeds = async () => {
   return result;
 };
 
-const navegateToSecondPage = async (page: any) => {
+const navegateToSecondPage = async (page: Page): Promise<FeedSchema[]> => {
   await page.goto(Constants.SECOND_URL, { waitUntil: 'networkidle2' });
   new Promise((page) => setTimeout(page, randomIntFromInterval(1000, 2000)));
   const feeds = await saveFeedsOfSecondPage(page);
   return feeds;
 };
 
-const saveFeedsOfOnePage = async (page: any) => {
-  let feeds: any[] = [];
+const saveFeedsOfOnePage = async (page: Page): Promise<FeedSchema[]> => {
+  let feeds: FeedSchema[] = [];
 
   await clickOnCookiePolicy(page);
 
@@ -69,10 +69,10 @@ const saveFeedsOfOnePage = async (page: any) => {
             const xpath = `//main[@class="mw mw-mc"]/div[1]/section/div[${
               index1 + 1
             }]/  ${index1 === Constants.TWO ? 'div/' : ''}  article[${index2 + 1}]`;
-            let author: String = '';
-            let title: String = '';
-            let description: String = '';
-            let link: String = '';
+            let author: string = '';
+            let title: string = '';
+            let description: string = '';
+            let link: string = '';
 
             const links = await page.$x(`${xpath}/header/h2/a`);
             if (links.length > Constants.ZERO) {
@@ -121,8 +121,8 @@ const saveFeedsOfOnePage = async (page: any) => {
   return feeds;
 };
 
-const saveFeedsOfSecondPage = async (page: any) => {
-  let feeds: any[] = [];
+const saveFeedsOfSecondPage = async (page: Page): Promise<FeedSchema[]> => {
+  let feeds: FeedSchema[] = [];
 
   const mainPath = `//div[@class="ue-l-cg ue-l-cg--no-divider"][2]/div/div/div/div/div[2]/div`;
   await clickOnCookiePolicy(page);
@@ -134,12 +134,12 @@ const saveFeedsOfSecondPage = async (page: any) => {
       const subsections = await page.$x(`${mainPath}[${index1 + 1}]/div`);
       if (subsections.length > Constants.ZERO) {
         for (let index2 = 0; index2 < subsections.length; index2++) {
-          let author: String = '';
-          let title: String = '';
-          let description: String = '';
-          let link: String = '';
+          let author: string = '';
+          let title: string = '';
+          let description: string = '';
+          let link: string = '';
           if (index1 === Constants.ONE) {
-            let filteredAuthor: String = '';
+            let filteredAuthor: string = '';
             const article = await page.$x(
               `${mainPath}[${index1 + 1}]/div[${index2 + 1}]/article`
             );
@@ -243,7 +243,7 @@ const saveFeedsOfSecondPage = async (page: any) => {
   return feeds;
 };
 
-const saveFeed = async (feedDTO: FeedDTO, feeds: any) => {
+const saveFeed = async (feedDTO: FeedDTO, feeds: FeedSchema[]) => {
   try {
     const feed = await createFeed(feedDTO);
     feeds.push(feed);
@@ -259,7 +259,7 @@ const clickOnCookiePolicy = async (page: any) => {
   }
 };
 
-const randomIntFromInterval = (min: number, max: number) => {
+const randomIntFromInterval = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 

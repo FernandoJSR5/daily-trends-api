@@ -1,7 +1,7 @@
-import { FeedDTO } from 'api/utils/data-contracts';
+import { FeedDTO, FeedSchema } from 'api/utils/data-contracts';
 import { createFeed } from '../../../db/feeds';
 
-const saveFeed = async (feedDTO: FeedDTO) => {
+const saveFeed = async (feedDTO: FeedDTO): Promise<FeedSchema> => {
   try {
     const feed = await createFeed(feedDTO);
     return feed;

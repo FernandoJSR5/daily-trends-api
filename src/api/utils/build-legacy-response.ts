@@ -1,9 +1,9 @@
-import { LegacyResponse } from './data-contracts';
+import { FeedSchema, LegacyResponse } from './data-contracts';
 
 interface BuildLegacyResponseArgs {
   status: number;
   description: string;
-  data?: any;
+  data?: FeedSchema[] | FeedSchema;
 }
 
 function buildLegacyResponse({

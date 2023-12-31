@@ -17,6 +17,16 @@ export interface FeedDTO {
   link: String;
 }
 
+export interface FeedSchema {
+  title: string;
+  description?: string | undefined | null;
+  author?: string | undefined | null;
+  journal: string;
+  link: string;
+  createdAt: NativeDate;
+  updatedAt: NativeDate;
+}
+
 export interface ApiResponse {
   status?: string;
   description?: string;
@@ -31,5 +41,5 @@ export interface ApiError {
 export interface LegacyResponse {
   status?: number;
   description?: string;
-  data: any;
+  data?: FeedSchema[] | FeedSchema;
 }
